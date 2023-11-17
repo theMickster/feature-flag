@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using FeatureFlag.Common.Constants;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace FeatureFlag.API.libs;
@@ -40,8 +41,8 @@ internal static class SetupMiddlewarePipeline
 
         app.UseSwaggerUI(options =>
         {
-            options.DocumentTitle = "Feature Flag API";
-            options.SwaggerEndpoint("/swagger/v1/swagger.json", "Feature Flag API 1.0");
+            options.DocumentTitle = ServiceConstants.ServiceId;
+            options.SwaggerEndpoint("/swagger/v1/swagger.json", $"{ServiceConstants.ServiceId} 1.0");
             RewriteSwaggerIndexHtml(options, _swaggerNonceString);
         });
 

@@ -1,13 +1,17 @@
-﻿using System.Reflection;
-using Asp.Versioning;
+﻿using Asp.Versioning;
+using FeatureFlag.Application.Data;
 using FeatureFlag.Application.Exceptions;
+using FeatureFlag.Application.Interfaces.Data;
 using FeatureFlag.Common.Attributes;
 using FeatureFlag.Common.Constants;
 using FeatureFlag.Common.Settings;
+using FeatureFlag.Domain.Profiles;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Azure.Cosmos;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.OpenApi.Models;
+using System.Reflection;
 
 namespace FeatureFlag.API.libs;
 
@@ -41,7 +45,7 @@ internal static class RegisterServices
                 "v1",
                 new OpenApiInfo
                 {
-                    Title = "Feature Flag API",
+                    Title = ServiceConstants.ServiceId,
                     Version = "v1",
                     Description = "A web api for managing all things feature flags",
                     TermsOfService = new Uri("https://example.com/terms"),
@@ -110,7 +114,7 @@ internal static class RegisterServices
             options.DocInclusionPredicate((name, api) => true);
         });
 
-        //builder.Services.AddAutoMapper(typeof(BeerTypeEntityToModelProfile).GetTypeInfo().Assembly);
+        builder.Services.AddAutoMapper(typeof(FeatureFlagEntityToModelProfile).GetTypeInfo().Assembly);
 
         return builder;
     }
@@ -135,35 +139,16 @@ internal static class RegisterServices
             return cosmosClient;
         });
 
-/*
-        builder.Services.AddDbContext<BeersMetadataDbContext>(
-            options =>
-            {
-                options.UseCosmos(cosmosSettings.Account, cosmosSettings.SecurityKey, cosmosSettings.DatabaseName);
-#if DEBUG
-                options.EnableSensitiveDataLogging();
-#endif
-            });
+        builder.Services.AddDbContextFactory<FeatureFlagMetadataDbContext>((serviceProvider, options) =>
+        {
+            options.UseCosmos(cosmosSettings.Account, cosmosSettings.SecurityKey, cosmosSettings.DatabaseName);
+        });
 
-        builder.Services.AddDbContext<BeersDbContext>(
-            options =>
-            {
-                options.UseCosmos(cosmosSettings.Account, cosmosSettings.SecurityKey, cosmosSettings.DatabaseName);
-#if DEBUG
-                options.EnableSensitiveDataLogging();
-#endif
-            });
+        builder.Services.AddDbContextFactory<FeatureFlagDbContext>((serviceProvider, options) =>
+        {
+            options.UseCosmos(cosmosSettings.Account, cosmosSettings.SecurityKey, cosmosSettings.DatabaseName);
+        });
 
-        builder.Services.AddScoped<IBeersMetadataDbContext>(
-            provider => provider.GetService<BeersMetadataDbContext>() ??
-                        throw new ConfigurationException("The BeersMetadataDbContext is not properly registered in the correct order."));
-
-        builder.Services.AddScoped<IBeersDbContext>(
-            provider => provider.GetService<BeersDbContext>() ??
-                        throw new ConfigurationException("The BeersDbContext is not properly registered in the correct order."));
-
-
-*/
         return builder;
     }
 
@@ -174,7 +159,7 @@ internal static class RegisterServices
         var singleton = typeof(ServiceLifetimeSingletonAttribute);
 
         var appServices = AppDomain.CurrentDomain.GetAssemblies()
-            .Where(a => a.ManifestModule.Name.StartsWith("FeatureFlagEntity."))
+            .Where(a => a.ManifestModule.Name.StartsWith("FeatureFlag."))
 
             .SelectMany(t => t.GetTypes())
             .Where(x => (x.IsDefined(scoped, false) ||

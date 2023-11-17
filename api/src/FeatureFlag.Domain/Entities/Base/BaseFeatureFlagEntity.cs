@@ -4,6 +4,6 @@ public abstract class BaseFeatureFlagEntity : BaseEntity
 {
     public Guid FeatureFlagId { get; set; }
 
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
 }

@@ -7,5 +7,5 @@ public class FeatureFlagEntity : BaseFeatureFlagEntity
 {
     public string EntityType = PartitionKeyConstants.FeatureFlag;
 
-    public string DisplayName { get; set; }
+    public string DisplayName { get; set; } = string.Empty;
 }
