@@ -1,13 +1,13 @@
-﻿using Asp.Versioning;
+﻿using System.Reflection;
+using Asp.Versioning;
+using FeatureFlag.Application.Exceptions;
 using FeatureFlag.Common.Attributes;
+using FeatureFlag.Common.Constants;
 using FeatureFlag.Common.Settings;
 using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.OpenApi.Models;
-using System.Reflection;
-using FeatureFlag.Application.Exceptions;
-using FeatureFlag.Common.Constants;
-using Microsoft.Azure.Cosmos;
 
 namespace FeatureFlag.API.libs;
 
@@ -174,7 +174,7 @@ internal static class RegisterServices
         var singleton = typeof(ServiceLifetimeSingletonAttribute);
 
         var appServices = AppDomain.CurrentDomain.GetAssemblies()
-            .Where(a => a.ManifestModule.Name.StartsWith("FeatureFlag."))
+            .Where(a => a.ManifestModule.Name.StartsWith("FeatureFlagEntity."))
 
             .SelectMany(t => t.GetTypes())
             .Where(x => (x.IsDefined(scoped, false) ||

@@ -23,7 +23,7 @@ builder.Services.AddHsts(options =>
 });
 
 builder.Configuration
-    .AddUserSecrets<Program>()
+    .AddUserSecrets<FeatureFlag.API.Program>()
     .Build();
 
 builder.Configuration.RegisterApplicationConfiguration();
@@ -59,11 +59,14 @@ var app = builder.Build();
 app.SetupMiddleware()
     .Run();
 
-/// <summary>
-/// The entry point for the API.
-/// </summary>
-/// <remarks>
-/// Declared this way to bypass the unit test code coverage analysis
-/// </remarks>
-[ExcludeFromCodeCoverage]
-public partial class Program { }
+namespace FeatureFlag.API
+{
+    /// <summary>
+    /// The entry point for the API.
+    /// </summary>
+    /// <remarks>
+    /// Declared this way to bypass the unit test code coverage analysis
+    /// </remarks>
+    [ExcludeFromCodeCoverage]
+    public partial class Program { }
+}

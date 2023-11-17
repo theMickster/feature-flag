@@ -1,7 +1,7 @@
-﻿using FeatureFlag.Common.Constants;
-using Microsoft.ApplicationInsights.AspNetCore.Extensions;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using FeatureFlag.Application.Exceptions;
+using FeatureFlag.Common.Constants;
+using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 
 namespace FeatureFlag.API.libs;
 

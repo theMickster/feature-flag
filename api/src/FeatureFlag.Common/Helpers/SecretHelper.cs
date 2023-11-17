@@ -1,7 +1,6 @@
-﻿using Azure;
+﻿using System.Diagnostics.CodeAnalysis;
+using Azure;
 using Azure.Security.KeyVault.Secrets;
-using System.Diagnostics.CodeAnalysis;
-
 
 namespace FeatureFlag.Common.Helpers;
 
