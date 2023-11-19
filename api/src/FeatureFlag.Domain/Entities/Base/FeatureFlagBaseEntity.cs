@@ -1,6 +1,6 @@
 ﻿namespace FeatureFlag.Domain.Entities.Base;
 
-public abstract class BaseFeatureFlagEntity : BaseEntity
+public abstract class FeatureFlagBaseEntity : EntityBase
 {
     public Guid FeatureFlagId { get; set; }
 

@@ -17,6 +17,9 @@ public class ReadFeatureFlagConfigController : ControllerBase
 {
     private readonly ILogger<ReadFeatureFlagConfigController> _logger;
 
+    /// <summary>
+    /// The controller that coordinates retrieving feature flag configuration data.
+    /// </summary>
     public ReadFeatureFlagConfigController(ILogger<ReadFeatureFlagConfigController> logger)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));

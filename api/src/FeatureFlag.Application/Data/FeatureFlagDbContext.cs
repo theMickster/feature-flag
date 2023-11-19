@@ -40,7 +40,7 @@ public class FeatureFlagDbContext : DbContext, IFeatureFlagDbContext
 
     }
 
-    private static void ConfigureFeatureFlagEntity<T>(EntityTypeBuilder<T> entityTypeBuilder) where T : BaseFeatureFlagEntity
+    private static void ConfigureFeatureFlagEntity<T>(EntityTypeBuilder<T> entityTypeBuilder) where T : FeatureFlagBaseEntity
     {
         entityTypeBuilder.Property(x => x.Id).ToJsonProperty("id");
         entityTypeBuilder.ToContainer(CosmosContainerConstants.MainContainer);

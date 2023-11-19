@@ -3,7 +3,7 @@ using FeatureFlag.Domain.Entities.Base;
 
 namespace FeatureFlag.Domain.Entities;
 
-public class FeatureFlagConfigEntity : BaseFeatureFlagEntity
+public class FeatureFlagConfigEntity : FeatureFlagBaseEntity
 {
     public string EntityType = PartitionKeyConstants.FeatureFlagConfig;
 

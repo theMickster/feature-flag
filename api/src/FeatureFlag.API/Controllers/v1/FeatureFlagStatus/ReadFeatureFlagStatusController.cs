@@ -1,6 +1,8 @@
 ﻿using Asp.Versioning;
+using FeatureFlag.API.QueryParams;
 using FeatureFlag.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace FeatureFlag.API.Controllers.v1.FeatureFlagStatus;
 
@@ -9,8 +11,8 @@ namespace FeatureFlag.API.Controllers.v1.FeatureFlagStatus;
 /// </summary>
 [ApiController]
 [ApiVersion("1.0")]
-[ApiExplorerSettings(GroupName = "Feature Flag")]
-[Route("api/v{version:apiVersion}/featureFlags", Name = "Read Feature Flag Status Controller v1")]
+[ApiExplorerSettings(GroupName = "Feature Flag Status")]
+[Route("api/v{version:apiVersion}/featureFlagStatus", Name = "Read Feature Flag Status Controller v1")]
 [Produces("application/json")]
 public class ReadFeatureFlagStatusController : ControllerBase
 {
@@ -27,17 +29,22 @@ public class ReadFeatureFlagStatusController : ControllerBase
     /// <summary>
     /// Retrieve a feature flag's status
     /// </summary>
-    /// <param name="featureFlagId">the unique identifier</param>
     /// <returns>A single feature flag's status</returns>
-    [HttpGet("{featureFlagId:guid}/status", Name = "GetFeatureFlagStatusById")]
+    [HttpGet(Name = "GetFeatureFlagStatus")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FeatureFlagStatusModel))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetFeatureFlagStatusAsync(Guid featureFlagId)
+    public async Task<IActionResult> GetFeatureFlagStatusAsync([FromQuery][Required]FeatureFlagStatusQueryParameters queryParams )
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
 
         var model = new FeatureFlagStatusModel
         {
-            Id = featureFlagId,
+            Id = queryParams.FeatureFlagId,
+            ApplicationId = queryParams.ApplicationId,
+            EnvironmentId = queryParams.EnvironmentId,
             Name = "AlwaysOnSampleFeature",
             DisplayName = "An Always Enabled (Always On) Application Feature",
             Status = "On"

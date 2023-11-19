@@ -3,7 +3,7 @@ using FeatureFlag.Domain.Entities.Base;
 
 namespace FeatureFlag.Domain.Entities;
 
-public sealed class EnvironmentEntity : BaseMetadataEntity
+public sealed class EnvironmentEntity : MetadataBaseEntity
 {
     public string TypeName = PartitionKeyConstants.Environment;
 

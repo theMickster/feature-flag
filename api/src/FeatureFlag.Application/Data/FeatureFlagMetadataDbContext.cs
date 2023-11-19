@@ -7,12 +7,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace FeatureFlag.Application.Data;
 
-public class FeatureFlagMetadataDbContext : DbContext, IFeatureFlagMetadataDbContext
+public class FeatureFlagMetadataDbContext(DbContextOptions<FeatureFlagMetadataDbContext> options) 
+    : DbContext(options), IFeatureFlagMetadataDbContext
 {
-    public FeatureFlagMetadataDbContext(DbContextOptions<FeatureFlagMetadataDbContext> options) : base(options)
-    {
-    }
-
     public DbSet<ApplicationEntity> Applications { get; set; }
 
     public DbSet<EnvironmentEntity> Environments { get; set; }
@@ -36,7 +33,7 @@ public class FeatureFlagMetadataDbContext : DbContext, IFeatureFlagMetadataDbCon
         ruleType.HasDiscriminator(x => x.TypeName).HasValue(PartitionKeyConstants.RuleType);
     }
 
-    private static void ConfigureMetadataEntity<T>(EntityTypeBuilder<T> entityTypeBuilder) where T : BaseMetadataEntity
+    private static void ConfigureMetadataEntity<T>(EntityTypeBuilder<T> entityTypeBuilder) where T : MetadataBaseEntity
     {
         entityTypeBuilder.Property(x => x.Id).ToJsonProperty("id");
         entityTypeBuilder.ToContainer(CosmosContainerConstants.MetadataContainer);

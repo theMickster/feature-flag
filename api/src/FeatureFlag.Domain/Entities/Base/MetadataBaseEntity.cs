@@ -1,6 +1,6 @@
 ﻿namespace FeatureFlag.Domain.Entities.Base;
 
-public abstract class BaseMetadataEntity : BaseEntity
+public abstract class MetadataBaseEntity : EntityBase
 {
     public abstract Guid TypeId { get; set; }
 
