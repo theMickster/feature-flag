@@ -5,10 +5,8 @@ namespace FeatureFlag.Application.Exceptions;
 
 public class ConfigurationException : Exception
 {
-    private readonly IEnumerable<string> _errorMessages = new List<string>();
-
     [JsonIgnore]
-    public IEnumerable<string> ErrorMessages => _errorMessages;
+    public IEnumerable<string> ErrorMessages { get; } = new List<string>();
 
     #region Constructors
 
@@ -24,7 +22,7 @@ public class ConfigurationException : Exception
 
     public ConfigurationException(
         IEnumerable<string> errorMessages,
-        string message) : base(message) => _errorMessages = errorMessages;
+        string message) : base(message) => ErrorMessages = errorMessages;
 
     public ConfigurationException(string message, Exception innerException) : base(message, innerException)
     {
@@ -34,26 +32,14 @@ public class ConfigurationException : Exception
         IEnumerable<string> errorMessages,
         string message,
         Exception innerException) : base(message, innerException)
-        => _errorMessages = errorMessages;
-
-    protected ConfigurationException(SerializationInfo info, StreamingContext context) : base(info, context)
-    {
-        _errorMessages = info.GetValue(nameof(_errorMessages), typeof(IEnumerable<string>)) as IEnumerable<string> ?? Array.Empty<string>();
-    }
+        => ErrorMessages = errorMessages;
 
     #endregion Constructors
-
-
-    public override void GetObjectData(SerializationInfo info, StreamingContext context)
-    {
-        base.GetObjectData(info, context);
-
-        info.AddValue(nameof(_errorMessages), _errorMessages);
-    }
+    
 
     public override string ToString()
     {
-        var text = _errorMessages.Any() ? string.Join(";", _errorMessages) : "N/A";
+        var text = ErrorMessages.Any() ? string.Join(";", ErrorMessages) : "N/A";
 
         return $"ConfigurationException({Message}: {text})";
     }
