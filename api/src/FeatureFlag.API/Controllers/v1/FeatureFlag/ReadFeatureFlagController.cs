@@ -35,14 +35,14 @@ public class ReadFeatureFlagController : ControllerBase
     /// <summary>
     /// Retrieve a feature flag using its unique identifier
     /// </summary>
-    /// <param name="featureFlagId">the unique identifier</param>
-    /// <returns>A single feature flag</returns>
-    [HttpGet("{featureFlagId:guid}", Name = "GetFeatureFlagById")]
+    /// <param name="id">the unique identifier</param>
+    /// <returns>A single <seealso cref="FeatureFlagModel"/></returns>
+    [HttpGet("{id:Guid}", Name = "GetFeatureFlagById")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FeatureFlagModel))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetByIdAsync(Guid featureFlagId)
+    public async Task<IActionResult> GetByIdAsync(Guid id)
     {
-        var model = await _readFeatureFlagService.GetByIdAsync(featureFlagId);
+        var model = await _readFeatureFlagService.GetByIdAsync(id);
         return model == null ? NotFound("Unable to locate model.") : Ok(model);
     }
 
@@ -58,7 +58,7 @@ public class ReadFeatureFlagController : ControllerBase
     {
         var searchResult = await _readFeatureFlagService.GetFeatureFlagsAsync(parameters).ConfigureAwait(false);
 
-        if (searchResult.Results.Any())
+        if (searchResult.Results != null && searchResult.Results.Count != 0)
         {
             return Ok(searchResult);
         }

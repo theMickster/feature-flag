@@ -10,21 +10,29 @@ using Microsoft.Extensions.Options;
 
 namespace FeatureFlag.Application.Services.Base;
 
-public abstract class ReadMetadataBaseService<TModel, TEntity>(string cacheKey,
+public abstract class ReadMetadataBaseService<TModel, TEntity> : IReadMetadataBaseService<TModel> 
+    where TModel : MetadataBaseModel
+    where TEntity : MetadataBaseEntity
+{
+    protected readonly IDbContextFactory<FeatureFlagMetadataDbContext> DbContextFactory;
+    protected readonly IMemoryCache MemoryCache;
+    protected readonly IMapper Mapper;
+    protected readonly IOptionsSnapshot<CacheSettings> CacheSettings;
+
+    protected ReadMetadataBaseService(string cacheKey,
         IMapper mapper,
         IDbContextFactory<FeatureFlagMetadataDbContext> dbContextFactory,
         IMemoryCache memoryCache,
         IOptionsSnapshot<CacheSettings> cacheSettings)
-    : IReadMetadataBaseService<TModel>
-    where TModel : MetadataBaseModel
-    where TEntity : MetadataBaseEntity
-{
-    protected readonly IDbContextFactory<FeatureFlagMetadataDbContext> DbContextFactory = dbContextFactory ?? throw new ArgumentNullException(nameof(dbContextFactory));
-    protected readonly IMemoryCache MemoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
-    protected readonly IMapper Mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-    protected readonly IOptionsSnapshot<CacheSettings> CacheSettings = cacheSettings ?? throw new ArgumentNullException(nameof(cacheSettings));
+    {
+        CacheKey = cacheKey ?? throw new ArgumentNullException(nameof(cacheKey));
+        DbContextFactory = dbContextFactory  ?? throw new ArgumentNullException(nameof(dbContextFactory));
+        MemoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
+        Mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+        CacheSettings =  cacheSettings ?? throw new ArgumentNullException(nameof(cacheSettings));
+    }
 
-    public string CacheKey { get; } = cacheKey ?? throw new ArgumentNullException(nameof(cacheKey));
+    public string CacheKey { get; }
 
     /// <summary>
     /// Retrieve a list of metadata models.

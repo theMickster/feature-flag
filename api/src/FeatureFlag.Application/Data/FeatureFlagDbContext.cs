@@ -1,10 +1,10 @@
-﻿using FeatureFlag.Common.Constants;
+﻿using FeatureFlag.Application.Interfaces.Data;
+using FeatureFlag.Common.Constants;
 using FeatureFlag.Domain.Entities;
 using FeatureFlag.Domain.Entities.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System.Diagnostics;
-using FeatureFlag.Application.Interfaces.Data;
 
 namespace FeatureFlag.Application.Data;
 
@@ -32,12 +32,13 @@ public class FeatureFlagDbContext : DbContext, IFeatureFlagDbContext
         var featureFlagBuilder = modelBuilder.Entity<FeatureFlagEntity>();
         ConfigureFeatureFlagEntity(featureFlagBuilder);
         featureFlagBuilder.HasDiscriminator(x => x.EntityType).HasValue(PartitionKeyConstants.FeatureFlag);
-
-
+        
         var featureFlagConfigBuilder = modelBuilder.Entity<FeatureFlagConfigEntity>();
         ConfigureFeatureFlagEntity(featureFlagConfigBuilder);
         featureFlagConfigBuilder.HasDiscriminator(x => x.EntityType).HasValue(PartitionKeyConstants.FeatureFlagConfig);
-
+        featureFlagConfigBuilder.OwnsMany(x => x.Applications);
+        featureFlagConfigBuilder.OwnsMany(x => x.Environments);
+        featureFlagConfigBuilder.OwnsMany(x => x.Rules);
     }
 
     private static void ConfigureFeatureFlagEntity<T>(EntityTypeBuilder<T> entityTypeBuilder) where T : FeatureFlagBaseEntity

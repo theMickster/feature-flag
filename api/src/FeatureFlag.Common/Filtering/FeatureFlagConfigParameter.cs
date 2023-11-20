@@ -4,13 +4,15 @@ using FeatureFlag.Common.Filtering.Base;
 namespace FeatureFlag.Common.Filtering;
 
 /// <summary>
-/// Used to support paging in the Feature Flag list feature.
+/// Used to support paging in the Feature Flag Config list feature.
 /// </summary>
-public sealed class FeatureFlagParameter : QueryStringParamsBase
+public sealed class FeatureFlagConfigParameter : QueryStringParamsBase
 {
     private const string IdField = "id";
     private const string NameField = "name";
     private string _orderBy = IdField;
+
+    public Guid FeatureFlagId { get; set; } = Guid.Empty;
 
     public string OrderBy
     {

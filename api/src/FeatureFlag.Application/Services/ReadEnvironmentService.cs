@@ -6,7 +6,7 @@ using FeatureFlag.Common.Attributes;
 using FeatureFlag.Common.Constants;
 using FeatureFlag.Common.Settings;
 using FeatureFlag.Domain.Entities;
-using FeatureFlag.Domain.Models.Application;
+using FeatureFlag.Domain.Models.Environment;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
@@ -14,10 +14,10 @@ using Microsoft.Extensions.Options;
 namespace FeatureFlag.Application.Services;
 
 [ServiceLifetimeScoped]
-public sealed class ReadApplicationService: ReadMetadataBaseService<ApplicationModel, ApplicationEntity>, IReadApplicationService 
+public class ReadEnvironmentService : ReadMetadataBaseService<EnvironmentModel, EnvironmentEntity>, IReadEnvironmentService
 {
     [SuppressMessage("Style", "IDE0290:Use primary constructor", Justification = "Cannot be done here.")]
-    public ReadApplicationService(
+    public ReadEnvironmentService(
         IMapper mapper,
         IDbContextFactory<FeatureFlagMetadataDbContext> dbContextFactory,
         IMemoryCache memoryCache,
@@ -26,9 +26,9 @@ public sealed class ReadApplicationService: ReadMetadataBaseService<ApplicationM
     {
     }
 
-    protected override async Task<IReadOnlyCollection<ApplicationEntity>> GetEntitiesAsync()
+    protected override async Task<IReadOnlyCollection<EnvironmentEntity>> GetEntitiesAsync()
     {
         await using var context = await DbContextFactory.CreateDbContextAsync();
-        return (await context.Applications.ToListAsync()).AsReadOnly();
+        return (await context.Environments.ToListAsync()).AsReadOnly();
     }
 }

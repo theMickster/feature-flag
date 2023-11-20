@@ -1,6 +1,6 @@
 ﻿namespace FeatureFlag.Domain.Entities.Base;
 
-public abstract class SlimBaseEntity
+public abstract class BaseSlimEntity
 {
     public Guid MetadataId { get; set; } = Guid.NewGuid();
 
