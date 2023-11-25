@@ -3,6 +3,7 @@ using FeatureFlag.API.QueryParams;
 using FeatureFlag.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
+using FeatureFlag.Domain.Models.FeatureFlagStatus;
 
 namespace FeatureFlag.API.Controllers.v1.FeatureFlagStatus;
 

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Globalization;
 using System.Text.Json;
+using FeatureFlag.Domain.Models.FeatureFlagStatus;
 
 namespace FeatureFlag.API.Controllers.v1.FeatureFlagConfig;
 
