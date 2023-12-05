@@ -1,4 +1,5 @@
 ﻿using FeatureFlag.Domain.Models.FeatureFlagStatus;
+using FluentValidation.Results;
 
 namespace FeatureFlag.Application.Interfaces.Services;
 
@@ -9,5 +10,5 @@ public interface IReadFeatureFlagStatus
     /// </summary>
     /// <param name="inputParams"></param>
     /// <returns></returns>
-    Task<FeatureFlagStatusModel> GetFeatureFlagStatusAsync(FeatureFlagStatusInputParams inputParams);
+    Task<(FeatureFlagStatusModel, List<ValidationFailure>)> GetFeatureFlagStatusAsync(FeatureFlagStatusInputParams inputParams);
 }

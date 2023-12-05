@@ -10,7 +10,7 @@ public sealed class RuleEntityToModelProfile : Profile
     {
         CreateMap<RuleEntity, RuleModel>();
 
-        CreateMap<TimeRangeRuleEntity, TimeRangeRuleModel>();
+        CreateMap<TimeRangeRuleEntity, DateRangeRuleModel>();
 
         CreateMap<ApplicationRoleRuleEntity, ApplicationRoleRuleModel>();
     }

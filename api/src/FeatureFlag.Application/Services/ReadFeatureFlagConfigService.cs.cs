@@ -36,8 +36,30 @@ public class ReadFeatureFlagConfigService : IReadFeatureFlagConfigService
     /// </summary>
     /// <param name="parameters">the input paging parameters</param>
     /// <returns>a <seealso cref="FeatureFlagConfigSearchResultModel"/> object</returns>
-    public Task<FeatureFlagConfigSearchResultModel> GetFeatureFlagConfigsAsync(FeatureFlagConfigParameter parameters)
+    public async Task<FeatureFlagConfigSearchResultModel> GetFeatureFlagConfigsAsync(FeatureFlagConfigParameter parameters)
     {
-        throw new NotImplementedException();
+        var result = new FeatureFlagConfigSearchResultModel
+        {
+            PageNumber = parameters.PageNumber,
+            PageSize = parameters.PageSize,
+            TotalRecords = 0
+        };
+
+        await using var context = await _dbContextFactory.CreateDbContextAsync();
+        var totalCount = await context.FeatureFlagConfigurations.CountAsync(x => x.FeatureFlagId == parameters.FeatureFlagId);
+
+        var query = context.FeatureFlagConfigurations.AsQueryable();
+        query = query.Where(x => x.FeatureFlagId == parameters.FeatureFlagId);
+        var entities = await query.ToListAsync();
+
+        if (entities == null || !entities.Any())
+        {
+            return result;
+        }
+
+        var models = _mapper.Map<List<FeatureFlagConfigModel>>(entities);
+        result.Results = models;
+        result.TotalRecords = totalCount;
+        return result;
     }
 }

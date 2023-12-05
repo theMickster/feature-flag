@@ -7,6 +7,13 @@ namespace FeatureFlag.Application.Services.RuleEvaluator;
 [ServiceLifetimeScoped]
 public sealed class RuleEvaluatorService : IRuleEvaluatorService
 {
+    private readonly IRuleFactory _ruleFactory;
+
+    public RuleEvaluatorService(IRuleFactory ruleFactory)
+    {
+        _ruleFactory = ruleFactory ?? throw new ArgumentNullException(nameof(ruleFactory));
+    }
+    
     /// <summary>
     /// Execute the feature flag rule evaluation for the given inputs.
     /// </summary>

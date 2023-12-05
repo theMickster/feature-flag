@@ -16,5 +16,5 @@ public sealed class RuleModel
 
     public RuleTypeModel RuleType { get; set; } = new();
 
-    public List<RuleParameterModel>? Parameters { get; set; }
+    public RuleParameterModel? Parameters { get; set; }
 }

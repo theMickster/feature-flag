@@ -8,5 +8,7 @@ public sealed class RuleTypeEntity : MetadataBaseEntity
     public string TypeName = PartitionKeyConstants.RuleType;
 
     public override Guid TypeId { get; set; } = PartitionKeyConstants.RuleTypeGuid;
+
+    public string Description { get; set; } = string.Empty;
 }
 

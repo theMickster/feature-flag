@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FeatureFlag.API", "src\Feat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FeatureFlag.Application", "src\FeatureFlag.Application\FeatureFlag.Application.csproj", "{0CB92114-B660-411A-87BC-659D369A262B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FeatureFlag.Console", "src\FeatureFlag.Console\FeatureFlag.Console.csproj", "{E88360F4-3928-4F7C-857C-3026B3F89396}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FeatureFlag.Console", "src\FeatureFlag.Console\FeatureFlag.Console.csproj", "{E88360F4-3928-4F7C-857C-3026B3F89396}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Console", "Console", "{6A012E09-E770-48EB-A305-09602E0C6A68}"
 EndProject
