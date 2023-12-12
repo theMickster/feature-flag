@@ -1,8 +1,8 @@
-﻿using FeatureFlag.Domain.Models.RuleEvaluator;
+﻿using FeatureFlag.Domain.Models.RulesEngine;
 
 namespace FeatureFlag.Application.Interfaces.Services.RuleEvaluator;
 
 public interface IRuleFactory
 {
-    IReadOnlyList<IRule> BuildRules(RuleEvaluatorInputModel input);
+    IReadOnlyList<IRule> BuildRules(RulesEngineInputModel input);
 }

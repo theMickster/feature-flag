@@ -1,7 +1,9 @@
-﻿using FeatureFlag.Domain.Models.Rule;
-using FeatureFlag.Domain.Models.RuleEvaluator;
+﻿using FeatureFlag.Common.Constants;
+using FeatureFlag.Common.Utilities.Extensions;
+using FeatureFlag.Domain.Models.Rule;
+using FeatureFlag.Domain.Models.RulesEngine;
 
-namespace FeatureFlag.Application.Services.RuleEvaluator.Logic;
+namespace FeatureFlag.Application.Services.RulesEngine.Logic;
 
 public sealed class DateWindowRule : RuleBase
 {
@@ -23,14 +25,18 @@ public sealed class DateWindowRule : RuleBase
 
         _evaluationDate = evaluationDate;
     }
-    
+
+    public override Guid RuleTypeId => RuleTypeConstants.DateWindowRuleId;
+
     public override RuleResultTypeEnum Run()
     {
+        var result = _evaluationDate.IsDateInDateRange(RuleModel.Parameters!.DateRange!.StartDate, RuleModel.Parameters!.DateRange!.EndDate);
+        
         if (RuleModel.AllowRule == false)
         {
-            return RuleModel.Parameters!.DateRange!.IsWithinDateRange(_evaluationDate) ? RuleResultTypeEnum.Off : RuleResultTypeEnum.NotApplicable;
+            return result ? RuleResultTypeEnum.Off : RuleResultTypeEnum.NotApplicable;
         }
-
-        return RuleModel.Parameters!.DateRange!.IsWithinDateRange(_evaluationDate) ? RuleResultTypeEnum.On : RuleResultTypeEnum.Off;
+        
+        return result ? RuleResultTypeEnum.On : RuleResultTypeEnum.Off;
     }
 }

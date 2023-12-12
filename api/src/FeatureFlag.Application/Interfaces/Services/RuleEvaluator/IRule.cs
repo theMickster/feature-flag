@@ -1,4 +1,4 @@
-﻿using FeatureFlag.Domain.Models.RuleEvaluator;
+﻿using FeatureFlag.Domain.Models.RulesEngine;
 
 namespace FeatureFlag.Application.Interfaces.Services.RuleEvaluator;
 

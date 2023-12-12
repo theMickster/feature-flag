@@ -12,12 +12,12 @@ namespace FeatureFlag.Application.Services;
 public sealed class ReadFeatureFlagStatus : IReadFeatureFlagStatus
 {
     private readonly ILogger<ReadFeatureFlagStatus> _logger;
-    private readonly IRuleEvaluatorService _ruleEvaluatorService;
+    private readonly IRulesEngineService _ruleEvaluatorService;
     private readonly IValidator<FeatureFlagStatusInputParams> _validator;
     
     public ReadFeatureFlagStatus(
         ILogger<ReadFeatureFlagStatus> logger, 
-        IRuleEvaluatorService ruleEvaluatorService,
+        IRulesEngineService ruleEvaluatorService,
         IValidator<FeatureFlagStatusInputParams> validator)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));

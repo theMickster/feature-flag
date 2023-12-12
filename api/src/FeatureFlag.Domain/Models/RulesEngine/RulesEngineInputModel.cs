@@ -1,8 +1,8 @@
 ﻿using FeatureFlag.Domain.Models.Rule;
 
-namespace FeatureFlag.Domain.Models.RuleEvaluator;
+namespace FeatureFlag.Domain.Models.RulesEngine;
 
-public sealed class RuleEvaluatorInputModel
+public sealed class RulesEngineInputModel
 {
     public List<RuleModel> Rules { get; set; } = new();
 

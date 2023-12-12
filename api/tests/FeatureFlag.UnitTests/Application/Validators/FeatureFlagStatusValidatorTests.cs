@@ -63,6 +63,9 @@ public sealed class FeatureFlagStatusValidatorTests : UnitTestBase
     {
         _mockReadFeatureFlagService.Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync((FeatureFlagModel)null!);
+        
+        _mockReadFeatureFlagConfigService.Setup(x => x.GetFeatureFlagConfigsAsync(It.IsAny<FeatureFlagConfigParameter>()))
+            .ReturnsAsync(new FeatureFlagConfigSearchResultModel { PageNumber = 1, PageSize = 50, TotalRecords = 10, Results = new List<FeatureFlagConfigModel>() });
 
         _model = new FeatureFlagStatusInputParams
         {

@@ -1,7 +1,8 @@
-﻿using FeatureFlag.Domain.Models.Rule;
-using FeatureFlag.Domain.Models.RuleEvaluator;
+﻿using FeatureFlag.Common.Constants;
+using FeatureFlag.Domain.Models.Rule;
+using FeatureFlag.Domain.Models.RulesEngine;
 
-namespace FeatureFlag.Application.Services.RuleEvaluator.Logic;
+namespace FeatureFlag.Application.Services.RulesEngine.Logic;
 
 public sealed class AppUserRule : RuleBase
 {
@@ -9,6 +10,8 @@ public sealed class AppUserRule : RuleBase
         : base(ruleModel, applicationUserId, applicationRoles)
     {
     }
+
+    public override Guid RuleTypeId => RuleTypeConstants.ApplicationUserRuleId;
 
     public override RuleResultTypeEnum Run()
     {

@@ -1,8 +1,8 @@
 ﻿using FeatureFlag.Application.Interfaces.Services.RuleEvaluator;
 using FeatureFlag.Domain.Models.Rule;
-using FeatureFlag.Domain.Models.RuleEvaluator;
+using FeatureFlag.Domain.Models.RulesEngine;
 
-namespace FeatureFlag.Application.Services.RuleEvaluator.Logic;
+namespace FeatureFlag.Application.Services.RulesEngine.Logic;
 
 public abstract class RuleBase : IRule
 {
@@ -19,5 +19,7 @@ public abstract class RuleBase : IRule
         ApplicationRoles = applicationRoles ?? throw new ArgumentNullException(nameof(applicationRoles));
     }
 
+    public abstract Guid RuleTypeId { get; }
+    
     public abstract RuleResultTypeEnum Run();
 }
