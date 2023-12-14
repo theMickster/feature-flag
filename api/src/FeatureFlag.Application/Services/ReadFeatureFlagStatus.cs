@@ -1,5 +1,5 @@
 ﻿using FeatureFlag.Application.Interfaces.Services;
-using FeatureFlag.Application.Interfaces.Services.RuleEvaluator;
+using FeatureFlag.Application.Interfaces.Services.RulesEngine;
 using FeatureFlag.Common.Attributes;
 using FeatureFlag.Domain.Models.FeatureFlagStatus;
 using FluentValidation;

@@ -1,6 +1,5 @@
 ﻿using FeatureFlag.Common.Constants;
 using FeatureFlag.Domain.Models.Rule;
-using FeatureFlag.Domain.Models.RulesEngine;
 
 namespace FeatureFlag.Application.Services.RulesEngine.Logic;
 

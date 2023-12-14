@@ -1,6 +1,5 @@
-﻿using FeatureFlag.Application.Interfaces.Services.RuleEvaluator;
+﻿using FeatureFlag.Application.Interfaces.Services.RulesEngine;
 using FeatureFlag.Domain.Models.Rule;
-using FeatureFlag.Domain.Models.RulesEngine;
 
 namespace FeatureFlag.Application.Services.RulesEngine.Logic;
 
@@ -8,9 +7,22 @@ public abstract class RuleBase : IRule
 {
     protected readonly RuleModel RuleModel;
     protected readonly Guid ApplicationUserId;
-    protected readonly List<Guid>? ApplicationRoles;
+    protected readonly List<Guid> ApplicationRoles;
+    protected readonly DateTime EvaluationDate;
     protected readonly DateTime LocalNow = DateTime.Now;
     protected readonly DateTime UtcNow = DateTime.UtcNow;
+    protected readonly TimeOnly EvaluationTime;
+
+    protected RuleBase(RuleInput input)
+    {
+        ArgumentNullException.ThrowIfNull(input);
+
+        RuleModel = input.Rule ?? throw new ArgumentNullException(nameof(input.Rule));
+        ApplicationUserId = input.ApplicationUserId;
+        ApplicationRoles = input.ApplicationUserRoles ?? throw new ArgumentNullException(nameof(input.ApplicationUserRoles));
+        EvaluationDate = input.EvaluationDate;
+        EvaluationTime = TimeOnly.FromDateTime(input.EvaluationDate);
+    }
 
     protected RuleBase(RuleModel ruleModel, Guid applicationUserId, List<Guid>? applicationRoles)
     {

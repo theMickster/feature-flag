@@ -1,25 +1,16 @@
 ﻿using FeatureFlag.Common.Constants;
 using FeatureFlag.Domain.Models.Rule;
-using FeatureFlag.Domain.Models.RulesEngine;
 
 namespace FeatureFlag.Application.Services.RulesEngine.Logic;
 
 public sealed class TimeWindowRule : RuleBase
 {
-    private readonly TimeOnly _evaluationTime;
-
-    public TimeWindowRule(
-        RuleModel ruleModel, 
-        Guid applicationUserId, 
-        List<Guid>? applicationRoles,
-        TimeOnly evaluationTime)
-        : base(ruleModel, applicationUserId, applicationRoles)
+    public TimeWindowRule(RuleInput ruleInput) : base(ruleInput)
     {
-        _evaluationTime = evaluationTime;
-        if (ruleModel.Parameters?.TimeRange == null)
+        if (ruleInput.Rule.Parameters?.TimeRange == null)
         {
-            throw new ArgumentNullException(nameof(ruleModel),
-                $"The input parameters ${nameof(ruleModel.Parameters)} or ${nameof(ruleModel.Parameters.TimeRange)}" +
+            throw new ArgumentNullException(nameof(ruleInput.Rule.Parameters.TimeRange),
+                $"The input parameters ${nameof(ruleInput.Rule.Parameters)} or ${nameof(ruleInput.Rule.Parameters.TimeRange)}" +
                 $"to create the Time Window Rule are unknown.");
         }
     }
@@ -28,8 +19,7 @@ public sealed class TimeWindowRule : RuleBase
 
     public override RuleResultTypeEnum Run()
     {
-        var timeRange = RuleModel.Parameters?.TimeRange ?? throw new ArgumentNullException("TimeRange");
-        var result = _evaluationTime.IsBetween(timeRange.StartTime, timeRange.EndTime);
+        var result = EvaluationTime.IsBetween(RuleModel.Parameters!.TimeRange!.StartTime, RuleModel.Parameters!.TimeRange!.EndTime);
 
         if (RuleModel.AllowRule == false)
         {

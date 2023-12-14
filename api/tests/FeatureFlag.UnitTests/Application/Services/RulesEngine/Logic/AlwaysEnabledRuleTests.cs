@@ -1,6 +1,7 @@
-﻿using FeatureFlag.Application.Services.RulesEngine.Logic;
+﻿using FeatureFlag.Application.Services.RulesEngine;
+using FeatureFlag.Application.Services.RulesEngine.Logic;
 using FeatureFlag.Domain.Models.Rule;
-using FeatureFlag.Domain.Models.RulesEngine;
+using FeatureFlag.Domain.Models.RuleType;
 using FeatureFlag.UnitTests.Setup;
 
 namespace FeatureFlag.UnitTests.Application.Services.RulesEngine.Logic;
@@ -9,11 +10,22 @@ namespace FeatureFlag.UnitTests.Application.Services.RulesEngine.Logic;
 public sealed class AlwaysEnabledRuleTests : UnitTestBase
 {
     private AlwaysEnabledRule _sut;
-    private readonly RuleModel _model = new();
+    private readonly RuleInput _model = new()
+    {
+        EvaluationDate = DateTime.UtcNow,
+        Rule = new RuleModel()
+        {
+            AllowRule = true,
+            Parameters = new RuleParameterModel(),
+            Priority = 1,
+            RuleType = new RuleTypeModel()
+            
+        }
+    };
 
     public AlwaysEnabledRuleTests()
     {
-        _sut = new AlwaysEnabledRule(_model, Guid.NewGuid(), []);
+        _sut = new AlwaysEnabledRule(_model);
     }
 
     [Fact]
@@ -27,7 +39,7 @@ public sealed class AlwaysEnabledRuleTests : UnitTestBase
     [Fact]
     public void RuleTypeId_is_correct()
     {
-        _sut = new AlwaysEnabledRule(_model, new Guid(), []);
+        _sut = new AlwaysEnabledRule(_model);
         _sut.RuleTypeId.Should().Be(new Guid("b1b66940-68c3-4bd2-b99e-0538a08de10f"));
     }
 }

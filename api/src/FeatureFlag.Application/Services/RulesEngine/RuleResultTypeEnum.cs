@@ -1,4 +1,4 @@
-﻿namespace FeatureFlag.Domain.Models.RulesEngine;
+﻿namespace FeatureFlag.Application.Services.RulesEngine;
 
 public enum RuleResultTypeEnum
 {

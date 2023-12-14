@@ -11,5 +11,5 @@ public abstract class UnitTestBase
 
     public DateTime StaticTestDate01 => new(2023, 11, 11, 12, 12, 12);
 
-    public TimeOnly StaticTestTime01 => new(21, 15, 18);
+    public DateTime StaticTestDate02 => new(2023, 07, 20, 21, 15, 18);
 }

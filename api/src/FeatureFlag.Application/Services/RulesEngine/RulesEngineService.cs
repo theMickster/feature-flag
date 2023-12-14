@@ -1,7 +1,6 @@
-﻿using FeatureFlag.Application.Interfaces.Services.RuleEvaluator;
+﻿using FeatureFlag.Application.Interfaces.Services.RulesEngine;
 using FeatureFlag.Application.Services.RulesEngine.Logic;
 using FeatureFlag.Common.Attributes;
-using FeatureFlag.Domain.Models.RulesEngine;
 
 namespace FeatureFlag.Application.Services.RulesEngine;
 
@@ -18,12 +17,12 @@ public sealed class RulesEngineService : IRulesEngineService
     /// <summary>
     /// Execute the feature flag rule evaluation for the given inputs.
     /// </summary>
-    /// <param name="input">the <see cref="RulesEngineInputModel"/> input for the evaluator's execution.</param>
-    /// <returns>the <see cref="RulesEngineOutcomeModel"/> output for the evaluator 's execution.</returns>
-    public RulesEngineOutcomeModel Run(RulesEngineInputModel input)
+    /// <param name="input">the <see cref="RulesEngineInput"/> input for the evaluator's execution.</param>
+    /// <returns>the <see cref="RulesEngineOutcome"/> output for the evaluator 's execution.</returns>
+    public RulesEngineOutcome Run(RulesEngineInput input)
     {
         var rules = _ruleFactory.BuildRules(input);
-        var finalOutcome = new RulesEngineOutcomeModel{Outcome = RuleResultTypeEnum.Off};
+        var finalOutcome = new RulesEngineOutcome{Outcome = RuleResultTypeEnum.Off};
 
         if (RuleSetHasAlwaysDisabledRule(rules))
         {

@@ -1,8 +1,7 @@
-﻿using FeatureFlag.Application.Interfaces.Services.RuleEvaluator;
+﻿using FeatureFlag.Application.Interfaces.Services.RulesEngine;
 using FeatureFlag.Application.Services.RulesEngine;
 using FeatureFlag.Application.Services.RulesEngine.Logic;
 using FeatureFlag.Domain.Models.Rule;
-using FeatureFlag.Domain.Models.RulesEngine;
 using FeatureFlag.UnitTests.Setup;
 
 namespace FeatureFlag.UnitTests.Application.Services.RulesEngine;
@@ -15,7 +14,7 @@ public sealed class RulesEngineServiceTests : UnitTestBase
 
     public RulesEngineServiceTests()
     {
-        _mockRuleFactory.Setup(x => x.BuildRules(It.IsAny<RulesEngineInputModel>()))
+        _mockRuleFactory.Setup(x => x.BuildRules(It.IsAny<RulesEngineInput>()))
             .Returns(new List<IRule>());
         
         _sut = new RulesEngineService(_mockRuleFactory.Object);
@@ -32,8 +31,15 @@ public sealed class RulesEngineServiceTests : UnitTestBase
     [Fact]
     public void Run_should_return_off_when_rule_set_has_AlwaysDisabledRule()
     {
-        var input = new RulesEngineInputModel();
-        var ruleSet = new List<IRule> { new AlwaysDisabledRule(new RuleModel(), Guid.NewGuid(), []) };
+        var input = new RulesEngineInput();
+        var ruleSet = new List<IRule>
+        {
+            new AlwaysDisabledRule(new RuleInput()
+            {
+                ApplicationUserId = Guid.NewGuid(), ApplicationUserRoles = [], EvaluationDate = DateTime.UtcNow,
+                Rule = new RuleModel()
+            })
+        };
         _mockRuleFactory.Setup(x => x.BuildRules(input)).Returns(ruleSet);
         
         var result = _sut.Run(input);
@@ -44,8 +50,15 @@ public sealed class RulesEngineServiceTests : UnitTestBase
     [Fact]
     public void Run_should_return_on_when_rule_set_has_AlwaysEnabledRule()
     {
-        var input = new RulesEngineInputModel();
-        var ruleSet = new List<IRule> { new AlwaysEnabledRule(new RuleModel(), Guid.NewGuid(), []) };
+        var input = new RulesEngineInput();
+        var ruleSet = new List<IRule>
+        {
+            new AlwaysEnabledRule(new RuleInput()
+            {
+                ApplicationUserId = Guid.NewGuid(), ApplicationUserRoles = [], EvaluationDate = DateTime.UtcNow,
+                Rule = new RuleModel()
+            })
+        };
         _mockRuleFactory.Setup(x => x.BuildRules(input)).Returns(ruleSet);
         
         var result = _sut.Run(input);
@@ -57,7 +70,7 @@ public sealed class RulesEngineServiceTests : UnitTestBase
     [ClassData(typeof(RulesForTests))]
     public void Run_should_return_correct_outcome(List<IRule> rules, RuleResultTypeEnum expectedOutcome)
     {
-        var input = new RulesEngineInputModel();
+        var input = new RulesEngineInput();
         _mockRuleFactory.Setup(x => x.BuildRules(input)).Returns(rules);
         
         var result = _sut.Run(input);
@@ -91,8 +104,7 @@ public sealed class RulesEngineServiceTests : UnitTestBase
                 new SomeRuleThatReturnsNotApplicable(new RuleModel(), Guid.NewGuid(), [])], RuleResultTypeEnum.NotApplicable);
         }
     }
-
-
+    
     private class SomeRuleThatReturnsOn (RuleModel ruleModel, Guid applicationUserId, List<Guid>? applicationRoles)
         : RuleBase(ruleModel, applicationUserId, applicationRoles)
     {
