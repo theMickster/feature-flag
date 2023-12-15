@@ -1,6 +1,7 @@
 ﻿using FeatureFlag.Application.Interfaces.Services;
 using FeatureFlag.Application.Interfaces.Services.RulesEngine;
 using FeatureFlag.Common.Attributes;
+using FeatureFlag.Common.Filtering;
 using FeatureFlag.Domain.Models.FeatureFlagStatus;
 using FluentValidation;
 using FluentValidation.Results;
@@ -12,16 +13,19 @@ namespace FeatureFlag.Application.Services;
 public sealed class ReadFeatureFlagStatus : IReadFeatureFlagStatus
 {
     private readonly ILogger<ReadFeatureFlagStatus> _logger;
-    private readonly IRulesEngineService _ruleEvaluatorService;
+    private readonly IRulesEngineService _rulesEngineService;
+    private readonly IReadFeatureFlagConfigService _readFeatureFlagConfigService;
     private readonly IValidator<FeatureFlagStatusInputParams> _validator;
     
     public ReadFeatureFlagStatus(
         ILogger<ReadFeatureFlagStatus> logger, 
-        IRulesEngineService ruleEvaluatorService,
+        IRulesEngineService rulesEngineService,
+        IReadFeatureFlagConfigService readFeatureFlagConfigService,
         IValidator<FeatureFlagStatusInputParams> validator)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _ruleEvaluatorService = ruleEvaluatorService ?? throw new ArgumentNullException(nameof(ruleEvaluatorService));
+        _rulesEngineService = rulesEngineService ?? throw new ArgumentNullException(nameof(rulesEngineService));
+        _readFeatureFlagConfigService = readFeatureFlagConfigService ?? throw new ArgumentNullException(nameof(readFeatureFlagConfigService));
         _validator = validator ?? throw new ArgumentNullException(nameof(validator));
     }
 
@@ -40,6 +44,15 @@ public sealed class ReadFeatureFlagStatus : IReadFeatureFlagStatus
             return (new FeatureFlagStatusModel(), validationResult.Errors);
         }
 
+        var configs = await _readFeatureFlagConfigService.GetFeatureFlagConfigsAsync(
+            new FeatureFlagConfigParameter {FeatureFlagId = inputParams.FeatureFlagId });
+
+        if (configs.TotalRecords == 0)
+        {
+            return (new FeatureFlagStatusModel(),
+                    [new() {ErrorMessage = $"Unable to locate any feature flag configurations for feature flag id {inputParams.FeatureFlagId}"}]);
+        }
+        
 
         throw new NotImplementedException();
     }

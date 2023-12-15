@@ -1,9 +1,11 @@
 ﻿using FeatureFlag.Application.Interfaces.Services.RulesEngine;
 using FeatureFlag.Application.Services.RulesEngine.Logic;
+using FeatureFlag.Common.Attributes;
 using FeatureFlag.Common.Constants;
 
 namespace FeatureFlag.Application.Services.RulesEngine;
 
+[ServiceLifetimeScoped]
 public sealed class RuleFactory : IRuleFactory
 {
     public IReadOnlyList<IRule> BuildRules(RulesEngineInput input)
