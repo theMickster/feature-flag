@@ -16,7 +16,6 @@ namespace FeatureFlag.Application.Services;
 [ServiceLifetimeScoped]
 public sealed class ReadApplicationService: ReadMetadataBaseService<ApplicationModel, ApplicationEntity>, IReadApplicationService 
 {
-    [SuppressMessage("Style", "IDE0290:Use primary constructor", Justification = "Cannot be done here.")]
     public ReadApplicationService(
         IMapper mapper,
         IDbContextFactory<FeatureFlagMetadataDbContext> dbContextFactory,

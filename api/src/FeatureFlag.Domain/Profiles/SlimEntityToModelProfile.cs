@@ -17,6 +17,8 @@ public class SlimEntityToModelProfile : Profile
             .ForPath(x => x.Id, o => o.MapFrom(y => y.MetadataId));
 
         CreateMap<RuleTypeSlimEntity, RuleTypeModel>()
-            .ForPath(x => x.Id, o => o.MapFrom(y => y.MetadataId));
+            .ForPath(x => x.Id, o => o.MapFrom(y => y.MetadataId))
+            .ForPath(x => x.Name, o => o.MapFrom(y => y.Name))
+            .ForPath(x => x.Description, o => o.Ignore());
     }
 }
