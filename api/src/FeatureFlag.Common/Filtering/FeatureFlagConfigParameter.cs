@@ -14,6 +14,10 @@ public sealed class FeatureFlagConfigParameter : QueryStringParamsBase
 
     public Guid FeatureFlagId { get; set; } = Guid.Empty;
 
+    public Guid ApplicationId { get; set; } = Guid.Empty;
+    
+    public Guid EnvironmentId { get; set; } = Guid.Empty;
+
     public string OrderBy
     {
         get
@@ -29,4 +33,6 @@ public sealed class FeatureFlagConfigParameter : QueryStringParamsBase
             _orderBy = value?.Trim().ToLower() == IdField ? IdField
                 : value?.Trim().ToLower() == NameField ? NameField : IdField;
     }
+
+    
 }
