@@ -1,4 +1,6 @@
-﻿using FeatureFlag.Application.Services;
+﻿using FeatureFlag.Application.Interfaces.Services;
+using FeatureFlag.Application.Services;
+using FeatureFlag.Common.Attributes;
 using FeatureFlag.Common.Constants;
 using FeatureFlag.Common.Settings;
 using FeatureFlag.UnitTests.Setup;
@@ -10,8 +12,9 @@ namespace FeatureFlag.UnitTests.Application.Services;
 [ExcludeFromCodeCoverage]
 public sealed class ReadApplicationServiceTests : PersistenceUnitTestBase
 {
-    private readonly ReadApplicationService _sut;
+    private ReadApplicationService _sut;
     private readonly Mock<IOptionsSnapshot<CacheSettings>> _mockOptionsSnapshotConfig = new();
+    private readonly MemoryCache _memoryCache;
 
     public ReadApplicationServiceTests()
     {
@@ -21,9 +24,62 @@ public sealed class ReadApplicationServiceTests : PersistenceUnitTestBase
                 TimeoutInSeconds = 10
             });
         
-        var memoryCache = new MemoryCache(new MemoryCacheOptions());
-        _sut = new ReadApplicationService(Mapper, MockMetadataDbContextFactory.Object, memoryCache,
+        _memoryCache = new MemoryCache(new MemoryCacheOptions());
+        _sut = new ReadApplicationService(Mapper, MockMetadataDbContextFactory.Object, _memoryCache,
             _mockOptionsSnapshotConfig.Object);
+    }
+
+    [Fact]
+    public void Type_has_correct_structure()
+    {
+        using (new AssertionScope())
+        {
+            typeof(ReadApplicationService)
+                .Should().Implement<IReadApplicationService>();
+
+            typeof(ReadApplicationService)
+                .IsDefined(typeof(ServiceLifetimeScopedAttribute), false)
+                .Should().BeTrue();
+        }
+    }
+
+    [Fact]
+    public void constructor_throws_correct_exceptions()
+    {
+        using (new AssertionScope())
+        {
+            _ = ((Action)(() => _sut = new ReadApplicationService(
+                    null!,
+                    MockMetadataDbContextFactory.Object, 
+                    _memoryCache,
+                    _mockOptionsSnapshotConfig.Object)))
+                .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
+                .And.ParamName.Should().Be("mapper");
+
+            _ = ((Action)(() => _sut = new ReadApplicationService(
+                    Mapper,
+                    null!,
+                    _memoryCache,
+                    _mockOptionsSnapshotConfig.Object)))
+                .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
+                .And.ParamName.Should().Be("dbContextFactory");
+
+            _ = ((Action)(() => _sut = new ReadApplicationService(
+                    Mapper,
+                    MockMetadataDbContextFactory.Object,
+                    null!,
+                    _mockOptionsSnapshotConfig.Object)))
+                .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
+                .And.ParamName.Should().Be("memoryCache");
+
+            _ = ((Action)(() => _sut = new ReadApplicationService(
+                    Mapper,
+                    MockMetadataDbContextFactory.Object,
+                    _memoryCache,
+                    null!)))
+                .Should().Throw<ArgumentNullException>("because we expect a null argument exception.")
+                .And.ParamName.Should().Be("cacheSettings");
+        }
     }
 
     [Fact]

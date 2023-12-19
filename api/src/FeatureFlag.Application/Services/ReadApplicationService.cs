@@ -14,17 +14,14 @@ using Microsoft.Extensions.Options;
 namespace FeatureFlag.Application.Services;
 
 [ServiceLifetimeScoped]
-public sealed class ReadApplicationService: ReadMetadataBaseService<ApplicationModel, ApplicationEntity>, IReadApplicationService 
+public sealed class ReadApplicationService(
+    IMapper mapper,
+    IDbContextFactory<FeatureFlagMetadataDbContext> dbContextFactory,
+    IMemoryCache memoryCache,
+    IOptionsSnapshot<CacheSettings> cacheSettings)
+        : ReadMetadataBaseService<ApplicationModel, ApplicationEntity>(CacheKeyConstants.ApplicationList, mapper,
+            dbContextFactory, memoryCache, cacheSettings), IReadApplicationService
 {
-    public ReadApplicationService(
-        IMapper mapper,
-        IDbContextFactory<FeatureFlagMetadataDbContext> dbContextFactory,
-        IMemoryCache memoryCache,
-        IOptionsSnapshot<CacheSettings> cacheSettings) : base
-        (CacheKeyConstants.ApplicationList, mapper, dbContextFactory, memoryCache, cacheSettings)
-    {
-    }
-
     protected override async Task<IReadOnlyCollection<ApplicationEntity>> GetEntitiesAsync()
     {
         await using var context = await DbContextFactory.CreateDbContextAsync();
