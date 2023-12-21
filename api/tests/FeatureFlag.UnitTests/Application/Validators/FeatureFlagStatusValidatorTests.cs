@@ -79,7 +79,7 @@ public sealed class FeatureFlagStatusValidatorTests : UnitTestBase
         using (new AssertionScope())
         {
             validationResult.ShouldHaveValidationErrorFor(a => a.FeatureFlagId)
-                .WithErrorCode("Rule-01");
+                .WithErrorCode("FeatureFlagStatus-Rule-01");
         }
     }
 

@@ -1,5 +1,6 @@
 ﻿using FeatureFlag.Application.Interfaces.Services;
 using FeatureFlag.Application.Interfaces.Services.RulesEngine;
+using FeatureFlag.Application.Services.RulesEngine;
 using FeatureFlag.Common.Attributes;
 using FeatureFlag.Common.Filtering;
 using FeatureFlag.Domain.Models.FeatureFlagStatus;
@@ -47,15 +48,32 @@ public sealed class ReadFeatureFlagStatus : IReadFeatureFlagStatus
         var configs = await _readFeatureFlagConfigService.GetFeatureFlagConfigsAsync(
             new FeatureFlagConfigParameter {FeatureFlagId = inputParams.FeatureFlagId });
 
-        if (configs.TotalRecords == 0)
+        if (configs.TotalRecords == 0 || configs.Results == null || configs.Results.Count == 0)
         {
             return (new FeatureFlagStatusModel(),
-                    [new() {ErrorMessage = $"Unable to locate any feature flag configurations for feature flag id {inputParams.FeatureFlagId}"}]);
+                    [new() { ErrorCode = "FeatureFlagStatus-Rule-01", ErrorMessage = $"Unable to locate any feature flag configurations for feature flag id {inputParams.FeatureFlagId}"}]);
         }
-        
-        
-        
 
-        throw new NotImplementedException();
+        var allRules = configs.Results.SelectMany(x => x.Rules).ToList();
+
+        var rulesEngineInput = new RulesEngineInput
+        {
+            EvaluationDate = DateTime.Now,
+            ApplicationUserRoles = [],
+            ApplicationUserId = Guid.NewGuid(),
+            Rules = allRules
+        };
+        
+        var rulesEngineOutcome = _rulesEngineService.Run(rulesEngineInput);
+        
+        var featureFlagStatus = new FeatureFlagStatusModel
+        {
+            Id = inputParams.FeatureFlagId,
+            ApplicationId = inputParams.ApplicationId,
+            EnvironmentId = inputParams.EnvironmentId,
+            Status = rulesEngineOutcome.Outcome.ToString()
+        };
+
+        return (featureFlagStatus, validationResult.Errors);
     }
 }

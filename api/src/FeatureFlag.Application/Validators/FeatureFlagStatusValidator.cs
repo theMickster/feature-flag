@@ -20,13 +20,13 @@ public class FeatureFlagStatusValidator : AbstractValidator<FeatureFlagStatusInp
             .MustAsync(async (model, cancellation) => await FeatureFlagMustExist(model.FeatureFlagId))
             .OverridePropertyName(x => x.FeatureFlagId)
             .WithMessage(FeatureFlagInvalid)
-            .WithErrorCode("Rule-01");
+            .WithErrorCode("FeatureFlagStatus-Rule-01");
 
         RuleFor(x => x)
             .MustAsync(async (model, cancellation) => await FeatureFlagConfigurationMustExist(model.FeatureFlagId, model.ApplicationId, model.EnvironmentId))
             .OverridePropertyName("FeatureFlagStatusModel")
             .WithMessage(ModelInputsInvalid)
-            .WithErrorCode("Rule-02");
+            .WithErrorCode("FeatureFlagStatus-Rule-02");
     }
 
     public static string FeatureFlagInvalid => "Feature Flag Id must exist in the system.";
