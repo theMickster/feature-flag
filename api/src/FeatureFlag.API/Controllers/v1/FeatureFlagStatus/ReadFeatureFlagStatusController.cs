@@ -5,7 +5,6 @@ using FeatureFlag.Application.Interfaces.Services;
 using FeatureFlag.Common.Constants;
 using FeatureFlag.Domain.Models.FeatureFlagStatus;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Identity.Web.UI.Areas.MicrosoftIdentity.Pages.Account;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
@@ -42,6 +41,8 @@ public class ReadFeatureFlagStatusController(ILogger<ReadFeatureFlagStatusContro
         if (!ModelState.IsValid)
         {
             EventLogErrorParameters.Add(AppLoggingConstants.Status, AppLoggingConstants.StatusBadRequest);
+            _logger.LogError(JsonConvert.SerializeObject(EventLogErrorParameters));
+
             return BadRequest(ModelState);
         }
 

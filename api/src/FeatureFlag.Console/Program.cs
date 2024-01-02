@@ -6,6 +6,7 @@ using FeatureFlag.Console;
 using Microsoft.Azure.Cosmos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System.Diagnostics.CodeAnalysis;
 
 Console.ForegroundColor = ConsoleColor.Green;
 Console.WriteLine("Hello, from the Feature Flag Console App!");
