@@ -1,7 +1,6 @@
 ﻿using Asp.Versioning;
 using FeatureFlag.Application.Data;
 using FeatureFlag.Application.Exceptions;
-using FeatureFlag.Application.Interfaces.Data;
 using FeatureFlag.Application.Validators;
 using FeatureFlag.Common.Attributes;
 using FeatureFlag.Common.Constants;
