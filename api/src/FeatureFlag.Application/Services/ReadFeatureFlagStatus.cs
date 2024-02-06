@@ -11,24 +11,19 @@ using Microsoft.Extensions.Logging;
 namespace FeatureFlag.Application.Services;
 
 [ServiceLifetimeScoped]
-public sealed class ReadFeatureFlagStatus : IReadFeatureFlagStatus
+public sealed class ReadFeatureFlagStatus(
+    ILogger<ReadFeatureFlagStatus> logger,
+    IRulesEngineService rulesEngineService,
+    IReadFeatureFlagConfigService readFeatureFlagConfigService,
+    IReadFeatureFlagService readFeatureFlagService,
+    IValidator<FeatureFlagStatusInputParams> validator)
+    : IReadFeatureFlagStatus
 {
-    private readonly ILogger<ReadFeatureFlagStatus> _logger;
-    private readonly IRulesEngineService _rulesEngineService;
-    private readonly IReadFeatureFlagConfigService _readFeatureFlagConfigService;
-    private readonly IValidator<FeatureFlagStatusInputParams> _validator;
-    
-    public ReadFeatureFlagStatus(
-        ILogger<ReadFeatureFlagStatus> logger, 
-        IRulesEngineService rulesEngineService,
-        IReadFeatureFlagConfigService readFeatureFlagConfigService,
-        IValidator<FeatureFlagStatusInputParams> validator)
-    {
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _rulesEngineService = rulesEngineService ?? throw new ArgumentNullException(nameof(rulesEngineService));
-        _readFeatureFlagConfigService = readFeatureFlagConfigService ?? throw new ArgumentNullException(nameof(readFeatureFlagConfigService));
-        _validator = validator ?? throw new ArgumentNullException(nameof(validator));
-    }
+    private readonly ILogger<ReadFeatureFlagStatus> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    private readonly IRulesEngineService _rulesEngineService = rulesEngineService ?? throw new ArgumentNullException(nameof(rulesEngineService));
+    private readonly IReadFeatureFlagConfigService _readFeatureFlagConfigService = readFeatureFlagConfigService ?? throw new ArgumentNullException(nameof(readFeatureFlagConfigService));
+    private readonly IValidator<FeatureFlagStatusInputParams> _validator = validator ?? throw new ArgumentNullException(nameof(validator));
+    private readonly IReadFeatureFlagService _readFeatureFlagService = readFeatureFlagService ?? throw new ArgumentNullException(nameof(readFeatureFlagService));
 
     /// <summary>
     /// Retrieve the feature flag's status based upon the context of the user inputs.
@@ -44,6 +39,14 @@ public sealed class ReadFeatureFlagStatus : IReadFeatureFlagStatus
             _logger.LogInformation("Validator errors occurred while attempting to retrieve feature flag status.");
             return (new FeatureFlagStatusModel(), validationResult.Errors);
         }
+        
+        var featureFlag = await _readFeatureFlagService.GetByIdAsync(inputParams.FeatureFlagId);
+        if (featureFlag == null)
+        {
+            return (new FeatureFlagStatusModel(),
+                [new() { ErrorCode = "FeatureFlagStatus-Rule-01", 
+                    ErrorMessage = $"Unable to locate feature flag by id: {inputParams.FeatureFlagId}" }]);
+        }
 
         var configs = await _readFeatureFlagConfigService.GetFeatureFlagConfigsAsync(
             new FeatureFlagConfigParameter {FeatureFlagId = inputParams.FeatureFlagId });
@@ -51,14 +54,14 @@ public sealed class ReadFeatureFlagStatus : IReadFeatureFlagStatus
         if (configs.TotalRecords == 0 || configs.Results == null || configs.Results.Count == 0)
         {
             return (new FeatureFlagStatusModel(),
-                    [new() { ErrorCode = "FeatureFlagStatus-Rule-01", ErrorMessage = $"Unable to locate any feature flag configurations for feature flag id {inputParams.FeatureFlagId}"}]);
+                    [new() { ErrorCode = "FeatureFlagStatus-Rule-02", ErrorMessage = $"Unable to locate any feature flag configurations for feature flag id {inputParams.FeatureFlagId}"}]);
         }
 
         var allRules = configs.Results.SelectMany(x => x.Rules).ToList();
 
         var rulesEngineInput = new RulesEngineInput
         {
-            EvaluationDate = DateTime.Now,
+            EvaluationDate = inputParams.LocalDate,
             ApplicationUserRoles = [],
             ApplicationUserId = Guid.NewGuid(),
             Rules = allRules
@@ -71,7 +74,9 @@ public sealed class ReadFeatureFlagStatus : IReadFeatureFlagStatus
             Id = inputParams.FeatureFlagId,
             ApplicationId = inputParams.ApplicationId,
             EnvironmentId = inputParams.EnvironmentId,
-            Status = rulesEngineOutcome.Outcome.ToString()
+            Status = rulesEngineOutcome.Outcome.ToString(),
+            Name = featureFlag.Name,
+            DisplayName = featureFlag.DisplayName
         };
 
         return (featureFlagStatus, validationResult.Errors);

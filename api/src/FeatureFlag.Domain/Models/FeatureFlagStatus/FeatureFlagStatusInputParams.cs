@@ -16,4 +16,19 @@ public sealed class FeatureFlagStatusInputParams
     /// The environment to evaluate the feature flag's status
     /// </summary>
     public Guid EnvironmentId { get; set; }
+
+    /// <summary>
+    /// The user's local timezone offset. 
+    /// </summary>
+    public decimal? TimeZoneOffset { get; set; }
+    
+    /// <summary>
+    /// The current date and time in UTC format.
+    /// </summary>
+    public DateTime CurrentUtcDate { get; set; }
+
+    /// <summary>
+    /// The current date and time in the user's local timezone.
+    /// </summary>
+    public DateTime LocalDate => this.TimeZoneOffset != null ? CurrentUtcDate.AddHours((double)TimeZoneOffset) : CurrentUtcDate;
 }

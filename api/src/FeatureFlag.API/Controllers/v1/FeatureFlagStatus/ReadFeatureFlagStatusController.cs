@@ -6,6 +6,7 @@ using FeatureFlag.Common.Constants;
 using FeatureFlag.Domain.Models.FeatureFlagStatus;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace FeatureFlag.API.Controllers.v1.FeatureFlagStatus;
@@ -50,7 +51,9 @@ public class ReadFeatureFlagStatusController(ILogger<ReadFeatureFlagStatusContro
         {
             ApplicationId = queryParams.ApplicationId,
             EnvironmentId = queryParams.EnvironmentId,
-            FeatureFlagId = queryParams.FeatureFlagId
+            FeatureFlagId = queryParams.FeatureFlagId,
+            TimeZoneOffset = queryParams.TimeZoneOffset,
+            CurrentUtcDate = DateTime.UtcNow
         };
 
         var (result, errors) = await _readFeatureFlagStatus.GetFeatureFlagStatusAsync(inputs);

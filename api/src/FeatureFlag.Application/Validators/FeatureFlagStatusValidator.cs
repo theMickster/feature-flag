@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using FeatureFlag.Application.Interfaces.Services;
+﻿using FeatureFlag.Application.Interfaces.Services;
 using FeatureFlag.Common.Filtering;
 using FeatureFlag.Domain.Models.FeatureFlagStatus;
 using FluentValidation;
@@ -27,11 +26,19 @@ public class FeatureFlagStatusValidator : AbstractValidator<FeatureFlagStatusInp
             .OverridePropertyName("FeatureFlagStatusModel")
             .WithMessage(ModelInputsInvalid)
             .WithErrorCode("FeatureFlagStatus-Rule-02");
+
+        RuleFor(x => x.TimeZoneOffset)
+            .InclusiveBetween(-12, 14)
+            .When(x => x.TimeZoneOffset != null)
+            .WithMessage(LocalTimeZoneInvalid)
+            .WithErrorCode("FeatureFlagStatus-Rule-03");
     }
 
     public static string FeatureFlagInvalid => "Feature Flag Id must exist in the system.";
 
     public static string ModelInputsInvalid => "The feature flag has not been properly configured for the given application and environment.";
+    
+    public static string LocalTimeZoneInvalid => "The timezone offset of the user is outside the bounds of valid timezone offsets.";
 
     private async Task<bool> FeatureFlagMustExist(Guid featureFlagId)
     {

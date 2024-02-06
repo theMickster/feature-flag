@@ -24,4 +24,10 @@ public sealed class FeatureFlagStatusQueryParameters
     /// </summary>
     [BindRequired]
     public Guid EnvironmentId { get; set; }
+
+    /// <summary>
+    /// The user's local timezone offset. 
+    /// </summary>
+    public decimal? TimeZoneOffset { get; set; }
+
 }
