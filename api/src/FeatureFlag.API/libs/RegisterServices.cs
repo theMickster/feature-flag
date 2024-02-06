@@ -1,11 +1,12 @@
 ﻿using Asp.Versioning;
 using FeatureFlag.Application.Data;
 using FeatureFlag.Application.Exceptions;
-using FeatureFlag.Application.Interfaces.Data;
+using FeatureFlag.Application.Validators;
 using FeatureFlag.Common.Attributes;
 using FeatureFlag.Common.Constants;
 using FeatureFlag.Common.Settings;
 using FeatureFlag.Domain.Profiles;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Azure.Cosmos;
 using Microsoft.EntityFrameworkCore;
@@ -115,7 +116,7 @@ internal static class RegisterServices
         });
 
         builder.Services.AddAutoMapper(typeof(FeatureFlagEntityToModelProfile).GetTypeInfo().Assembly);
-
+        builder.Services.AddValidatorsFromAssemblyContaining<FeatureFlagStatusValidator>();
         return builder;
     }
 

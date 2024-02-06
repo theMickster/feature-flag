@@ -10,13 +10,18 @@ namespace FeatureFlag.Application.Data;
 
 public class FeatureFlagDbContext : DbContext, IFeatureFlagDbContext
 {
+    /// <remarks>Parameterless constructor is only used for Xunit tests.</remarks>
+    public FeatureFlagDbContext()
+    {
+    }
+    
     public FeatureFlagDbContext(DbContextOptions<FeatureFlagDbContext> options) : base(options)
     {
     }
 
-    public DbSet<FeatureFlagConfigEntity> FeatureFlagConfigurations { get; set; }
+    public virtual DbSet<FeatureFlagConfigEntity> FeatureFlagConfigurations { get; set; }
 
-    public DbSet<FeatureFlagEntity> FeatureFlags { get; set; }
+    public virtual DbSet<FeatureFlagEntity> FeatureFlags { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

@@ -2,7 +2,7 @@
 
 public sealed class TimeRangeRuleModel
 {
-    public DateTime StartDate { get; set; } = DateTime.UtcNow;
+    public TimeOnly StartTime { get; set; }
 
-    public DateTime EndDate { get; set; } = DateTime.UtcNow;
+    public TimeOnly EndTime { get; set; }
 }

@@ -4,7 +4,7 @@ namespace FeatureFlag.Common.Filtering.Base;
 
 public abstract class QueryStringParamsBase
 {
-    private int _take = 10;
+    private int _take = 50;
     private string _sortOrder = SortedResultConstants.Ascending;
 
     /// <summary>

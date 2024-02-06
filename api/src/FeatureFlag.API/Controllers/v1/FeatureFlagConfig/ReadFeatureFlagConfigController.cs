@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Globalization;
 using System.Text.Json;
+using FeatureFlag.Domain.Models.FeatureFlagStatus;
 
 namespace FeatureFlag.API.Controllers.v1.FeatureFlagConfig;
 
@@ -16,7 +17,7 @@ namespace FeatureFlag.API.Controllers.v1.FeatureFlagConfig;
 [ApiController]
 [ApiVersion("1.0")]
 [ApiExplorerSettings(GroupName = "Feature Flag Configurations")]
-[Route("api/v{version:apiVersion}/featureFlags/{id:Guid}/configurations", Name = "Read Feature Flag Configuration Controller v1")]
+[Route("api/v{version:apiVersion}/featureFlags/{featureFlagId:Guid}/configurations", Name = "Read Feature Flag Configuration Controller v1")]
 [Produces("application/json")]
 public class ReadFeatureFlagConfigController : ControllerBase
 {
@@ -35,7 +36,7 @@ public class ReadFeatureFlagConfigController : ControllerBase
     /// <summary>
     /// Retrieve a feature flag configuration using its unique identifier
     /// </summary>
-    /// <param name="id">the feature flag unique identifier</param>
+    /// <param name="featureFlagId">the feature flag unique identifier</param>
     /// <param name="featureFlagConfigurationId">the feature flag configuration's unique identifier</param>
     /// <returns>A single feature flag configuration</returns>
     [HttpGet("{featureFlagConfigurationId:guid}", Name = "GetFeatureFlagConfigByIdAsync")]
@@ -43,7 +44,7 @@ public class ReadFeatureFlagConfigController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetFeatureFlagConfigByIdAsync(
         [BindRequired]
-        Guid id,
+        Guid featureFlagId,
         [BindRequired]
         Guid featureFlagConfigurationId)
     {
@@ -52,7 +53,7 @@ public class ReadFeatureFlagConfigController : ControllerBase
             return BadRequest(ModelState);
         }
 
-        var model = await _readFeatureFlagConfigService.GetByIdAsync(featureFlagConfigurationId, id);
+        var model = await _readFeatureFlagConfigService.GetByIdAsync(featureFlagConfigurationId, featureFlagId);
 
         return model == null ? NotFound("Unable to locate model.") : Ok(model);
     }
@@ -60,19 +61,19 @@ public class ReadFeatureFlagConfigController : ControllerBase
     /// <summary>
     /// Retrieve a list of feature flag configurations by feature flag id.
     /// </summary>
-    /// <param name="id">the feature flag unique identifier</param>
+    /// <param name="featureFlagId">the feature flag unique identifier</param>
     /// <returns></returns>
     [HttpGet(Name = "GetFeatureFlagConfigsByFeatureFlagIdAsync")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<FeatureFlagStatusModel>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetFeatureFlagConfigsByFeatureFlagIdAsync([BindRequired] Guid id)
+    public async Task<IActionResult> GetFeatureFlagConfigsByFeatureFlagIdAsync([BindRequired] Guid featureFlagId, Guid applicationId, Guid environmentId)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
         
-        var configParameter = new FeatureFlagConfigParameter { FeatureFlagId = id };
+        var configParameter = new FeatureFlagConfigParameter { FeatureFlagId = featureFlagId, ApplicationId = applicationId, EnvironmentId = environmentId };
         var searchResult = await _readFeatureFlagConfigService.GetFeatureFlagConfigsAsync(configParameter);
 
         if (searchResult.Results != null && searchResult.Results.Count != 0)

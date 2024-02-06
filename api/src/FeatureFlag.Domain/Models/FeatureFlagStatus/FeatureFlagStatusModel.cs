@@ -1,4 +1,4 @@
-﻿namespace FeatureFlag.Domain.Models;
+﻿namespace FeatureFlag.Domain.Models.FeatureFlagStatus;
 
 public sealed class FeatureFlagStatusModel
 {
