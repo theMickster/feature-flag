@@ -1,5 +1,6 @@
 using FeatureFlag.API.libs;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,6 +43,9 @@ builder.Services.AddCors(options =>
             .AllowCredentials());
 });
 
+builder.RegisterApiAuthentication();
+
+builder.Services.AddAuthorizationPolicies();
 
 builder.RegisterAspDotNetServices();
 
@@ -53,6 +57,11 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
     options.SuppressModelStateInvalidFilter = true;
 });
+
+#if DEBUG
+IdentityModelEventSource.ShowPII = true;
+#endif
+
 
 var app = builder.Build();
 
