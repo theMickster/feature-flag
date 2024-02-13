@@ -58,11 +58,6 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
     options.SuppressModelStateInvalidFilter = true;
 });
 
-#if DEBUG
-IdentityModelEventSource.ShowPII = true;
-#endif
-
-
 var app = builder.Build();
 
 app.SetupMiddleware()

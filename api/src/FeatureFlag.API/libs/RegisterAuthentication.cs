@@ -15,22 +15,17 @@ internal static class RegisterAuthentication
     internal static WebApplicationBuilder RegisterApiAuthentication(this WebApplicationBuilder builder)
     {
         var debuggingEvents = GetAuthorizationDebuggingEvents();
-
-        var tenantId = SecretHelper.GetSecret("microsoft-entra-tenant-id");
-        var applicationId = SecretHelper.GetSecret("feature-flag-application-id");
-        var instanceUrl = builder.Configuration.GetSection("AzureAd")["Instance"] ?? string.Empty;
-        var domain = builder.Configuration.GetSection("AzureAd")["Domain"] ?? string.Empty;
-
+        
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddMicrosoftIdentityWebApi(jwtOptions => 
                 {
                     builder.Configuration.Bind("AzureAd", jwtOptions);
-//#if DEBUG
-//                    jwtOptions.RequireHttpsMetadata = false;
-//#endif
                     // Uncomment for debugging purposes
+                    //#if DEBUG
+                    //jwtOptions.RequireHttpsMetadata = false;
                     //jwtOptions.Events = debuggingEvents;
-                    jwtOptions.IncludeErrorDetails = true;
+                    //jwtOptions.IncludeErrorDetails = true;
+                    //#endif
                 }, options => 
                 {
                     builder.Configuration.Bind("AzureAd", options);
@@ -47,11 +42,22 @@ internal static class RegisterAuthentication
         services.AddAuthorization(options =>
         {
             options.AddPolicy(AuthPolicyConstants.RequireAdministratorPolicy,
-                policy => policy.RequireRole(AuthPolicyConstants.AdministratorRole));
-
+                policy =>
+                {
+                    policy.RequireAuthenticatedUser();
+                    policy.RequireRole(AuthPolicyConstants.AdministratorRole);
+                });
         });
-           //     policy.RequireAuthenticatedUser();
-                
+
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy(AuthPolicyConstants.RequireContributorPolicy,
+                policy =>
+                {
+                    policy.RequireAuthenticatedUser();
+                    policy.RequireRole(AuthPolicyConstants.AdministratorRole, AuthPolicyConstants.ContributorRole);
+                });
+        });
 
         return services;
     }

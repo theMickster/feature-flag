@@ -22,7 +22,7 @@ public class ReadHealthSamplesController(ILogger<ReadHealthSamplesController> lo
     /// </summary>
     /// <param name="id">the unique identifier</param>
     /// <returns>A single <seealso cref="HealthSamplesBaseController.HealthSampleModel"/></returns>
-    [Authorize(Policy = AuthPolicyConstants.RequireAdministratorPolicy)]
+    [Authorize(Policy = AuthPolicyConstants.RequireContributorPolicy)]
     [HttpGet("{id:Guid}", Name = "GetHealthSampleById")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(HealthSampleModel))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -33,7 +33,8 @@ public class ReadHealthSamplesController(ILogger<ReadHealthSamplesController> lo
             ControllerLogger.LogInformation("Invalid health sample request. A valid health sample unique identifier is required.");
             return BadRequest("Invalid health sample request.");
         }
-        
+        var info = HttpContext.User;
+
         var model = HealthSamples.FirstOrDefault(x => x.Id == id);
         
         return model == null ? NotFound("Unable to locate model.") : Ok(model);
@@ -43,11 +44,14 @@ public class ReadHealthSamplesController(ILogger<ReadHealthSamplesController> lo
     /// Retrieves the list of health samples
     /// </summary>
     /// <returns>List of <seealso cref="HealthSamplesBaseController.HealthSampleModel"/></returns>
+    [Authorize(Policy = AuthPolicyConstants.RequireAdministratorPolicy)]
     [HttpGet(Name = "GetHealthSamples")]
     [Produces(typeof(List<HealthSampleModel>))]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public IActionResult GetList()
     {
+        var info = HttpContext.User;
+
         ControllerLogger.LogInformation("Health sample list request received");
         return Ok(HealthSamples);
     }
